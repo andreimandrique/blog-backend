@@ -9,7 +9,7 @@ import rootRouter from "./routes/rootRoute.js";
 import signupRouter from "./routes/signupRoute.js";
 import loginRouter from "./routes/loginRoute.js";
 import blogsRouter from "./routes/blogsRoute.js";
-//add a comment
+
 app.use("/", rootRouter);
 app.use("/sign-up", signupRouter);
 app.use("/log-in", loginRouter);
