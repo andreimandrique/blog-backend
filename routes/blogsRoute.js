@@ -1,9 +1,11 @@
 import {Router} from "express";
-import {blogPost} from "../controllers/blogsController.js";
-import verifyToken from "../middlewares/verifyToken.js";
+import {blogGet,blogPost, blogPatch} from "../controllers/blogsController.js";
 
 const blogsRouter = Router();
 
-blogsRouter.post('/', verifyToken, blogPost);
+blogsRouter.get('/', blogGet);
+blogsRouter.post('/', blogPost);
+blogsRouter.patch('/', blogPatch);
+
 
 export default blogsRouter;
