@@ -1,11 +1,8 @@
-import {Router} from "express";
-import {blogGet,blogPost, blogPatch} from "../controllers/blogsController.js";
+import { Router } from "express";
+import { blogGet } from "../controllers/blogsController.js";
 
 const blogsRouter = Router();
 
-blogsRouter.get('/', blogGet);
-blogsRouter.post('/', blogPost);
-blogsRouter.patch('/', blogPatch);
-
+blogsRouter.get("/", blogGet);
 
 export default blogsRouter;

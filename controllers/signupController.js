@@ -1,42 +1,35 @@
-import {body, validationResult} from "express-validator";
-import {PrismaClient} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const validateUser = [
-    body("username").notEmpty().isLength({ min: 1 }).withMessage("Username is required"),
-    body("password").notEmpty().isLength({ min: 1 }).withMessage("Password is required"),
-    body("confirmPassword")
-        .notEmpty()
-        .custom(async (value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error("Password and confirm password do not match");
-            }
-        }),
-]
+const signupPost = async (req, res) => {
+  const { username, password, confirmPassword } = req.body;
 
-const signupPost =[ validateUser, async (req, res) => {
-    const { username, password } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: "Username cannot be empty" });
+  }
 
-    const errors = validationResult(req);
+  if (!password) {
+    return res.status(400).json({ error: "Password cannot be empty" });
+  }
 
-    if(!errors.isEmpty()) {
-        return res.status(400).send({errors: errors.array()});
-    }
-    
-    try {
-         await prisma.user.create({
-            data: {
-                username: username,
-                password: password,
-            },
-        })
-        res.status(201).json({message: "You successfully signed up"});
-    }catch (e) {
-        const error = [ {"msg": "Username already exists"} ];
-        res.status(500).json({errors: error});
-    }
+  if (password !== confirmPassword) {
+    return res
+      .status(400)
+      .json({ error: "Password and Confirm Password do not match" });
+  }
 
-}]
+  try {
+    await prisma.user.create({
+      data: {
+        username: username,
+        password: password,
+      },
+    });
+    res.status(201).json({ message: "You successfully signed up" });
+  } catch (e) {
+    res.status(500).json({ error: "Username already exist" });
+  }
+};
 
-export default signupPost
+export default signupPost;
