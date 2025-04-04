@@ -14,7 +14,8 @@ const loginPost = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "Username does not exist" });
     }
-    if (user['password'] !== password) {
+
+    if (user["password"] !== password) {
       return res.status(401).json({ error: "Wrong password" });
     }
 
