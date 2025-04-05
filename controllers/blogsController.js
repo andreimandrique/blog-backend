@@ -5,6 +5,9 @@ const prisma = new PrismaClient();
 const blogGet = async (req, res) => {
   try {
     const blogs = await prisma.blog.findMany({
+      where: {
+        published: true,
+      },
       include: {
         author: true,
       },
@@ -35,7 +38,7 @@ const blogPost = async (req, res) => {
 };
 
 const blogPatch = async (req, res) => {
-  const { blog_id, title, content } = req.body;
+  const { blog_id, title, content, published } = req.body;
 
   try {
     const blog = await prisma.blog.findUnique({
@@ -61,6 +64,7 @@ const blogPatch = async (req, res) => {
       data: {
         title: title,
         content: content,
+        published: published,
       },
     });
     res.status(200).json({ message: "You successfully updated the blog" });
