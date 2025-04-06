@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import jwtConfig from "../config/jwtConfig.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -22,11 +26,11 @@ const loginPost = async (req, res) => {
     const { user_id } = user;
     const tokenInfo = { user_id, username };
 
-    jwt.sign(tokenInfo, "secret", (err, token) => {
+    jwt.sign(tokenInfo, process.env.JWT_SECRET, jwtConfig, (err, token) => {
       if (err) {
         return res
           .status(400)
-          .json({ message: "There is an error generating jwt token" });
+          .json({ error: "There is an error generating jwt token" });
       }
       res.status(200).json({ token });
     });
