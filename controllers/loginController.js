@@ -15,6 +15,12 @@ const loginPost = async (req, res) => {
       where: { username: username },
     });
 
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and Password must not be empty" });
+    }
+
     if (!user) {
       return res.status(400).json({ error: "Username does not exist" });
     }
