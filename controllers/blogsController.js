@@ -102,4 +102,18 @@ const blogDelete = async (req, res) => {
   }
 };
 
-export { blogGet, blogPost, blogPatch, blogDelete };
+const blogMeGet = async (req, res) => {
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        author_id: Number(req.user.user_id),
+      },
+    });
+    res.status(200).json({ blogs: blogs });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: e });
+  }
+};
+
+export { blogGet, blogPost, blogPatch, blogDelete, blogMeGet };
