@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import sanitizeHtml from "sanitize-html";
+import tinyMCEConfig from "../config/tinyMCEConfig.js";
 
 const prisma = new PrismaClient();
 
@@ -27,7 +29,7 @@ const blogPost = async (req, res) => {
     await prisma.blog.create({
       data: {
         title: title,
-        content: content,
+        content: sanitizeHtml(content, tinyMCEConfig),
         author_id: Number(req.user.user_id),
       },
     });
@@ -63,7 +65,7 @@ const blogPatch = async (req, res) => {
       },
       data: {
         title: title,
-        content: content,
+        content: sanitizeHtml(content, tinyMCEConfig),
         published: published,
       },
     });
@@ -111,7 +113,6 @@ const blogMeGet = async (req, res) => {
     });
     res.status(200).json({ blogs: blogs });
   } catch (e) {
-    console.log(e);
     res.status(500).json({ error: e });
   }
 };
