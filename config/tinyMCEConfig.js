@@ -1,0 +1,51 @@
+const tinyMCEConfig = {
+  allowedTags: [
+    "p",
+    "b",
+    "i",
+    "u",
+    "em",
+    "strong",
+    "a",
+    "ul",
+    "ol",
+    "li",
+    "img",
+    "blockquote",
+    "code",
+    "pre",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "br",
+    "span",
+    "div",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "td",
+    "th",
+  ],
+  allowedAttributes: {
+    a: ["href", "name", "target", "rel"],
+    img: ["src", "alt", "width", "height"],
+    "*": ["style", "class"],
+  },
+  allowedStyles: {
+    "*": {
+      "text-align": [/^left$/, /^right$/, /^center$/, /^justify$/],
+      color: [/^.*$/],
+      "font-size": [/^\d+(px|em|%)$/],
+    },
+  },
+  allowedSchemes: ["http", "https", "mailto", "data"],
+  allowedSchemesByTag: {
+    img: ["http", "https", "data"],
+  },
+};
+
+export default tinyMCEConfig;
