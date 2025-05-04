@@ -20,6 +20,29 @@ const blogGet = async (req, res) => {
   }
 };
 
+const blogBlogIdGet = async (req,res) => {
+  const { blogId } = req.params;
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        published: true,
+        blog_id: Number(blogId)
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!blogs || blogs.length === 0) {
+      return res.status(404).json({ error: "No blogs found" });
+    }    
+
+    res.status(200).json({ blogs: blogs });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}
+
 const blogPost = async (req, res) => {
   const { title, content } = req.body;
   if (!title) {
@@ -117,4 +140,28 @@ const blogMeGet = async (req, res) => {
   }
 };
 
-export { blogGet, blogPost, blogPatch, blogDelete, blogMeGet };
+const blogMeBlogIdGet = async (req,res) =>{
+  const { blogId } = req.params;
+  try {
+    const blog = await prisma.blog.findUnique({
+      where: {
+        blog_id: Number(blogId),
+      },
+    });
+
+    if (!blog) {
+      return res.status(404).json({ error: "Blog do not exist" });
+    }
+
+    if (blog["author_id"] !== req.user.user_id) {
+      return res
+        .status(403)
+        .json({ error: "You do not have permission to view this blog" });
+    }
+    res.status(200).json({ blog: blog });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+}
+
+export { blogGet, blogBlogIdGet, blogPost, blogPatch, blogDelete, blogMeGet, blogMeBlogIdGet };
