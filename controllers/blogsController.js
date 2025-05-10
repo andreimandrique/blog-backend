@@ -20,13 +20,52 @@ const blogGet = async (req, res) => {
   }
 };
 
-const blogBlogIdGet = async (req,res) => {
+const blogMeGet = async (req, res) => {
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        author_id: Number(req.user.user_id),
+      },
+    });
+    res.status(200).json({ blogs: blogs });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const blogMeBlogIdGet = async (req, res) => {
   const { blogId } = req.params;
+
+  try {
+    const blog = await prisma.blog.findUnique({
+      where: {
+        blog_id: Number(blogId),
+      },
+    });
+
+    if (!blog) {
+      return res.status(404).json({ error: "Blog do not exist" });
+    }
+
+    if (blog["author_id"] !== req.user.user_id) {
+      return res
+        .status(403)
+        .json({ error: "You do not have permission to access this blog" });
+    }
+    res.status(200).json({ blog: blog });
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+};
+
+const blogBlogIdGet = async (req, res) => {
+  const { blogId } = req.params;
+
   try {
     const blogs = await prisma.blog.findMany({
       where: {
         published: true,
-        blog_id: Number(blogId)
+        blog_id: Number(blogId),
       },
       include: {
         author: true,
@@ -35,16 +74,17 @@ const blogBlogIdGet = async (req,res) => {
 
     if (!blogs || blogs.length === 0) {
       return res.status(404).json({ error: "No blogs found" });
-    }    
+    }
 
     res.status(200).json({ blogs: blogs });
   } catch (e) {
     res.status(500).json({ error: e });
   }
-}
+};
 
 const blogPost = async (req, res) => {
   const { title, content } = req.body;
+
   if (!title) {
     return res.status(400).json({ error: "Title cannot be empty" });
   }
@@ -100,6 +140,7 @@ const blogPatch = async (req, res) => {
 
 const blogDelete = async (req, res) => {
   const { blog_id } = req.body;
+
   try {
     const blog = await prisma.blog.findUnique({
       where: {
@@ -127,41 +168,12 @@ const blogDelete = async (req, res) => {
   }
 };
 
-const blogMeGet = async (req, res) => {
-  try {
-    const blogs = await prisma.blog.findMany({
-      where: {
-        author_id: Number(req.user.user_id),
-      },
-    });
-    res.status(200).json({ blogs: blogs });
-  } catch (e) {
-    res.status(500).json({ error: e });
-  }
+export {
+  blogGet,
+  blogMeGet,
+  blogMeBlogIdGet,
+  blogBlogIdGet,
+  blogPost,
+  blogPatch,
+  blogDelete,
 };
-
-const blogMeBlogIdGet = async (req,res) =>{
-  const { blogId } = req.params;
-  try {
-    const blog = await prisma.blog.findUnique({
-      where: {
-        blog_id: Number(blogId),
-      },
-    });
-
-    if (!blog) {
-      return res.status(404).json({ error: "Blog do not exist" });
-    }
-
-    if (blog["author_id"] !== req.user.user_id) {
-      return res
-        .status(403)
-        .json({ error: "You do not have permission to view this blog" });
-    }
-    res.status(200).json({ blog: blog });
-  } catch (e) {
-    res.status(500).json({ error: e });
-  }
-}
-
-export { blogGet, blogBlogIdGet, blogPost, blogPatch, blogDelete, blogMeGet, blogMeBlogIdGet };
