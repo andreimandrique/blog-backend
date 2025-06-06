@@ -11,7 +11,12 @@ const blogGet = async (req, res) => {
         published: true,
       },
       include: {
-        author: true,
+        author: {
+          select: {
+            user_id: true,
+            username: true,
+          },
+        },
       },
     });
     res.status(200).json({ blogs: blogs });
@@ -68,7 +73,12 @@ const blogBlogIdGet = async (req, res) => {
         blog_id: Number(blogId),
       },
       include: {
-        author: true,
+        author: {
+          select: {
+            user_id: true,
+            username: true,
+          },
+        },
       },
     });
 
