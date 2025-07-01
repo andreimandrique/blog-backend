@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -20,10 +21,11 @@ const signupPost = async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.user.create({
       data: {
         username: username,
-        password: password,
+        password: hashedPassword,
       },
     });
     res.status(201).json({ message: "You successfully signed up" });
